@@ -1,0 +1,4 @@
+# no meamcs temp files
+*~
+# no pyc files
+*.pyc 
