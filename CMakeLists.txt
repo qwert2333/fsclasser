@@ -26,10 +26,19 @@ INCLUDE( ilcsoft_default_settings )
 
 
 FIND_PACKAGE( Marlin 1.0 REQUIRED ) # minimum required Marlin version
+FIND_PACKAGE( FastJet 2.4.2 REQUIRED ) # minimum required Marlin version
+FIND_PACKAGE( MarlinKinfit 0.1.2 REQUIRED ) # minimum required Marlin version
+#FIND_PACKAGE( LCFIPlus 0.5.2 REQUIRED ) # minimum required Marlin version
+
 INCLUDE_DIRECTORIES( ${Marlin_INCLUDE_DIRS} )
 INCLUDE_DIRECTORIES( ${MarlinKinfit_INCLUDE_DIRS} )
+INCLUDE_DIRECTORIES( ${FastJet_INCLUDE_DIRS} )
+INCLUDE_DIRECTORIES( ${LCFIPlus_INCLUDE} )
+
 LINK_LIBRARIES( ${Marlin_LIBRARIES} )
 ADD_DEFINITIONS( ${Marlin_DEFINITIONS} )
+LINK_LIBRARIES( ${MarlinKinfit_LIBRARIES} )
+LINK_LIBRARIES( ${FastJet_LIBRARIES} )
 
 INCLUDE_DIRECTORIES( ${ROOT_INCLUDE_DIRS} )
 

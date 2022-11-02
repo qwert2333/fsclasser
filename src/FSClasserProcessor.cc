@@ -341,7 +341,11 @@ void FSClasserProcessor::processEvent( LCEvent * evt ) {
 	LCCollection    *colMCTL        = NULL;
 	if( m_full>0 && m_makeplots>0 )  colPFOPandora = evt->getCollection( "PandoraPFOs" );
 	//	
-	if( _colPFOs != "" ) colPFOs = evt->getCollection( _colPFOs );
+	if( _colPFOs != "" ) 
+  {
+    colPFOs = evt->getCollection( _colPFOs );
+    if( m_debug>1 ) printf("No. of elements in PFOCol = %3d\n", colPFOs->getNumberOfElements() );
+  }
 	//	
 	if( (m_findTaup ||  m_findTaum) && _colTaus != ""  ){
 		colTaus  = evt->getCollection(_colTaus);
@@ -1534,7 +1538,10 @@ FSClasserProcessor::BuildFullSimParticleList(
 		for (int i=0;i<nPFOs;i++) {
 			ReconstructedParticle *recPart = dynamic_cast<ReconstructedParticle*>(colPFO->getElementAt(i));
 			Double_t energy = recPart->getEnergy();
-			if ( energy<m_EnergyCut ) continue; 
+			if ( energy<m_EnergyCut ) {
+        if(m_debug>4) printf("recPFO energy: %.3f, less than threshold. \n", energy);
+        continue; 
+      }
 			raw_PFOs.push_back(recPart); 
 			TrackVec   tckvec = recPart->getTracks();
 			ClusterVec cluvec = recPart->getClusters();
@@ -1582,7 +1589,7 @@ FSClasserProcessor::BuildFullSimParticleList(
 			Double_t cosTheta = momentum.CosTheta();
 			Double_t momentumMagnitude = momentum.Mag();
 			ntrks += ntrk;
-			if(fabs(charge)>0.1)nclus += nclu;
+			if(fabs(charge)>0.1) nclus += nclu;
 			if( energy   > _Emax ) _Emax = energy  ;
 			if( momentumMagnitude  > _Pmax ) _Pmax = momentumMagnitude;
 			TLorentzVector p4 = TLorentzVector(momentum,energy);
@@ -1667,7 +1674,8 @@ FSClasserProcessor::BuildFullSimParticleList(
 							}
 							delete navMCTL;
 						}
-						if( pdgid==22 && energy > 2 ) photonList.push_back(new FSParticle(recPart, colMCTL, partonList, "gamma") );
+						//if( pdgid==22 && energy > 2 ) photonList.push_back(new FSParticle(recPart, colMCTL, partonList, "gamma") );
+						if( energy > 2 ) photonList.push_back(new FSParticle(recPart, colMCTL, partonList, "gamma") );
 					}
 				}
 			}
@@ -1854,6 +1862,7 @@ FSClasserProcessor::BuildFullSimParticleList(
 				jetList .push_back(new FSParticle(pJet, colMCTL, partonList,  "jet", btag, ctag, bctag, cat, flavor));
 			}
 			//
+      /*
 			if ( m_full>0 ) {
 				ReconstructedParticle *Jet0 = dynamic_cast<ReconstructedParticle *>(colJets->getElementAt(0));
 				Int_t algo_y = pidh.getAlgorithmID("yth");
@@ -1866,13 +1875,14 @@ FSClasserProcessor::BuildFullSimParticleList(
 				_y56 = params_y[pidh.getParameterIndex(algo_y, "y56")];
 				_y67 = params_y[pidh.getParameterIndex(algo_y, "y67")];
 			}else{
+       */
 				_y12 =  colJets->parameters().getFloatVal( "y12" );
 				_y23 =  colJets->parameters().getFloatVal( "y23" );
 				_y34 =  colJets->parameters().getFloatVal( "y34" );
 				_y45 =  colJets->parameters().getFloatVal( "y45" );
 				_y56 =  colJets->parameters().getFloatVal( "y56" );
 				_y67 =  colJets->parameters().getFloatVal( "y67" );
-			}
+			//}
 			_y12 =  _y12>1.01 ?  _y12-100.0 : _y12;  
 			_y23 =  _y23>1.01 ?  _y23-100.0 : _y23;  
 			_y34 =  _y34>1.01 ?  _y34-100.0 : _y34;  

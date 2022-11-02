@@ -1,4 +1,5 @@
 # no meamcs temp files
+build/
 *~
 # no pyc files
 *.pyc 
